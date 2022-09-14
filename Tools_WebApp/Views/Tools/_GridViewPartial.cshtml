@@ -1,0 +1,73 @@
+@using DevExtreme.AspNet.Mvc;
+@using System.Web.UI.WebControls;
+
+
+@{
+
+    var grid = Html.DevExpress().GridView(settings =>
+    {
+        settings.Name = "GridView";
+        settings.CallbackRouteValues = new
+        {
+            Controller = "Tools",
+            Action = "GridViewPartial"
+        };
+
+        //settings.SettingsEditing.UpdateRowRouteValues = new { Controller = "Tools", Action = "GridViewPartialCreateReport" };
+        settings.SettingsEditing.Mode = GridViewEditingMode.EditFormAndDisplayRow;
+        settings.SettingsBehavior.ConfirmDelete = true;
+
+        settings.CommandColumn.Visible = true;
+
+        //settings.CommandColumn.ShowEditButton = true;
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Unbound";
+            column.Caption = "Report";
+            column.UnboundType = DevExpress.Data.UnboundColumnType.String;
+            column.EditFormSettings.Visible = DevExpress.Utils.DefaultBoolean.False;
+            column.Width = Unit.Percentage(10);
+            column.SetDataItemTemplateContent((c) =>
+            {
+
+                Html.DevExpress().Button(b =>
+                {
+                    b.Name = "Create_Report_Button" + c.KeyValue;
+                    b.Text = "Download";
+                    b.RouteValues = new { Controller = "Tools", Action = "GridViewPartialCreateReport", id = c.KeyValue.ToString() };
+                }).GetHtml();
+            });
+        });
+
+        settings.KeyFieldName = "IdTool";
+
+        settings.SettingsPager.Visible = true;
+        settings.Settings.ShowGroupPanel = true;
+        settings.Settings.ShowFilterRow = true;
+        settings.SettingsBehavior.AllowSelectByRowClick = true;
+
+        settings.SettingsAdaptivity.AdaptivityMode = GridViewAdaptivityMode.Off;
+        settings.SettingsAdaptivity.AdaptiveColumnPosition = GridViewAdaptiveColumnPosition.Right;
+        settings.SettingsAdaptivity.AdaptiveDetailColumnCount = 1;
+        settings.SettingsAdaptivity.AllowOnlyOneAdaptiveDetailExpanded = false;
+        settings.SettingsAdaptivity.HideDataCellsAtWindowInnerWidth = 0;
+
+        settings.Columns.Add("IdTool");
+        settings.Columns.Add("BoschCode");
+        settings.Columns.Add("Description");
+        settings.Columns.Add("PrimarySupplier");
+        settings.Columns.Add("SecondarySupplier");
+        settings.Columns.Add("Quantity");
+    });
+
+    if (ViewData["EditError"] != null)
+    {
+        grid.SetEditErrorText((string)ViewData["EditError"]);
+    }
+
+}
+@grid.Bind(Model).GetHtml()
+
+
+
