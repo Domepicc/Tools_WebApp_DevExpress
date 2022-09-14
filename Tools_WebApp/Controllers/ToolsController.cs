@@ -254,7 +254,7 @@ namespace Tools_WebApp.Controllers
             int pictureIndex = workbook.AddPicture(data, PictureType.PNG);
             ICreationHelper helper = workbook.GetCreationHelper();
            
- IDrawing drawing = sheet.CreateDrawingPatriarch();
+            IDrawing drawing = sheet.CreateDrawingPatriarch();
             IClientAnchor anchor = helper.CreateClientAnchor();
 
             anchor.Col1 = Col1;

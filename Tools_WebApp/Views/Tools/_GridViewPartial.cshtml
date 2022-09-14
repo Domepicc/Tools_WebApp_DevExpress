@@ -1,6 +1,23 @@
 @using DevExtreme.AspNet.Mvc;
 @using System.Web.UI.WebControls;
 
+<script>
+
+        function createReport(stringId) {
+            console.log(stringId);
+
+            $.ajax({
+
+                async: true,
+                url: "/Tools/GridViewPartialCreateReport/" + stringId ,
+                type: "GET",
+                success: function () {
+                    window.open("https://localhost:44340/Tools/GridViewPartialCreateReport/" + stringId );
+                }
+            });
+    };
+
+</script>
 
 @{
 
@@ -21,24 +38,7 @@
 
         //settings.CommandColumn.ShowEditButton = true;
 
-        settings.Columns.Add(column =>
-        {
-            column.FieldName = "Unbound";
-            column.Caption = "Report";
-            column.UnboundType = DevExpress.Data.UnboundColumnType.String;
-            column.EditFormSettings.Visible = DevExpress.Utils.DefaultBoolean.False;
-            column.Width = Unit.Percentage(10);
-            column.SetDataItemTemplateContent((c) =>
-            {
 
-                Html.DevExpress().Button(b =>
-                {
-                    b.Name = "Create_Report_Button" + c.KeyValue;
-                    b.Text = "Download";
-                    b.RouteValues = new { Controller = "Tools", Action = "GridViewPartialCreateReport", id = c.KeyValue.ToString() };
-                }).GetHtml();
-            });
-        });
 
         settings.KeyFieldName = "IdTool";
 
@@ -59,6 +59,28 @@
         settings.Columns.Add("PrimarySupplier");
         settings.Columns.Add("SecondarySupplier");
         settings.Columns.Add("Quantity");
+
+        settings.Columns.Add(column =>
+        {
+            column.VisibleIndex = settings.Columns.Count + 1;
+            column.FieldName = "Unbound";
+            column.Caption = "Report";
+            column.UnboundType = DevExpress.Data.UnboundColumnType.String;
+            column.EditFormSettings.Visible = DevExpress.Utils.DefaultBoolean.False;
+            column.Width = Unit.Percentage(10);
+            column.SetDataItemTemplateContent((c) =>
+            {
+
+                Html.DevExpress().Button(b =>
+                {
+                    b.Name = "Create_Report_Button" + c.KeyValue;
+                    b.Text = "Download";
+                    b.RouteValues = new { Controller = "Tools", Action = "GridViewPartialCreateReport", id = c.KeyValue.ToString() };
+                    //b.ClientSideEvents.Click = $"createReport({c.KeyValue.ToString()})";
+                }).GetHtml();
+            });
+        });
+
     });
 
     if (ViewData["EditError"] != null)
