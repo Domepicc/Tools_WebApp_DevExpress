@@ -130,16 +130,9 @@ namespace Tools_WebApp.Controllers
         {
             var model = db.Tools;
             if (ModelState.IsValid)
-            {
-                try
-                {
-                    model.Add(item);
-                    db.SaveChanges();
-                }
-                catch (Exception e)
-                {
-                    ViewData["EditError"] = e.Message;
-                }
+            {                             
+                CreateToolCommand command = new CreateToolCommand(item);
+                _command.Publish(command);            
             }
             else
                 ViewData["EditError"] = "Please, correct all errors.";
@@ -147,12 +140,26 @@ namespace Tools_WebApp.Controllers
         }
 
         [System.Web.Http.HttpGet, ValidateInput(false)]
-        [System.Web.Http.Route("/Tools/GridViewPartialCreateReport/")]
-        public FileResult GridViewPartialCreateReport(string id)
+        [System.Web.Http.Route("/Tools/GridViewPartialReportPreview/")]
+        public ActionResult GridViewPartialReportPreview(string id)
         {
-            Tool itemTest = _query.ReadById(id);
-            Byte[] qrCore = CreateQrCode(itemTest.BoschCode, SIZE_QR_CORE);
-            return CreateReport(itemTest, qrCore);
+            Tool item = _query.ReadById(id);
+            Byte[] qrCore = CreateQrCode(item.BoschCode, SIZE_QR_CORE);
+
+            // CQRS !!
+            //ReportTool reportTool = new ReportTool(item);
+            //reportTool.QrCode = qrCore;
+
+            return View("ToolReport", item);
+        }
+
+        [System.Web.Http.HttpGet, ValidateInput(false)]
+        [System.Web.Http.Route("/Tools/GridViewPartialReportDownload/")]
+        public FileResult GridViewPartialReportDownload(string id)
+        {
+            Tool item = _query.ReadById(id);
+            Byte[] qrCore = CreateQrCode(item.BoschCode, SIZE_QR_CORE);
+            return CreateReport(item, qrCore);
         }
 
         [HttpPost, ValidateInput(false)]
@@ -170,22 +177,13 @@ namespace Tools_WebApp.Controllers
         }
 
         [HttpPost, ValidateInput(false)]
-        public ActionResult GridViewPartialDelete(System.String IdTool)
+        public ActionResult GridViewPartialDelete([ModelBinder(typeof(DevExpressEditorsBinder))] Tools_WebApp.Models.Tool item)
         {
             var model = db.Tools;
-            if (IdTool != null)
+            if (item.IdTool != null)
             {
-                try
-                {
-                    var item = _query.ReadById(IdTool);
-                    if (item != null)
-                        model.Remove(item);
-                    db.SaveChanges();
-                }
-                catch (Exception e)
-                {
-                    ViewData["EditError"] = e.Message;
-                }
+                DeleteToolCommand command = new DeleteToolCommand(item.IdTool);
+                _command.Publish(command);
             }
             return PartialView("_GridViewPartial", _query.ReadAll());
         }
@@ -199,7 +197,10 @@ namespace Tools_WebApp.Controllers
             return PartialView("_DataViewPartial", _query.ReadAll());
         }
 
-        private Byte[] CreateQrCode(string qrText, int sizeQrCode)
+
+
+
+        public Byte[] CreateQrCode(string qrText, int sizeQrCode = 150)
         {
             Byte[] byteArray;
 
@@ -241,6 +242,57 @@ namespace Tools_WebApp.Controllers
                 }
             }
             return byteArray;
+
+        }
+
+        [System.Web.Mvc.HttpGet, ValidateInput(false)]
+        [System.Web.Mvc.Route("Tools/GetQrCode/{qrText}")]
+        public string GetQrCode(string qrText, int sizeQrCode = 150)
+        {
+            Byte[] byteArray;
+            string nameBitmap;
+            string fileGuid = Guid.NewGuid().ToString().Substring(0, 4);
+            string conv;
+            var qrCodeWriter = new ZXing.BarcodeWriterPixelData
+            {
+                Format = ZXing.BarcodeFormat.QR_CODE,
+                Options = new QrCodeEncodingOptions
+                {
+                    Height = sizeQrCode,
+                    Width = sizeQrCode
+                }
+            };
+            var pixelData = qrCodeWriter.Write(qrText);
+
+            // creating a bitmap from the raw pixel data; if only black and white colors are used it makes no difference
+            // that the pixel data ist BGRA oriented and the bitmap is initialized with RGB
+            using (var bitmap = new System.Drawing.Bitmap(pixelData.Width, pixelData.Height, System.Drawing.Imaging.PixelFormat.Format32bppRgb))
+            {
+                using (var ms = new MemoryStream())
+                {
+                    var bitmapData = bitmap.LockBits(new System.Drawing.Rectangle(0, 0, pixelData.Width, pixelData.Height), System.Drawing.Imaging.ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format32bppRgb);
+                    try
+                    {
+                        // we assume that the row stride of the bitmap is aligned to 4 byte multiplied by the width of the image
+                        System.Runtime.InteropServices.Marshal.Copy(pixelData.Pixels, 0, bitmapData.Scan0, pixelData.Pixels.Length);
+                    }
+                    finally
+                    {
+                        bitmap.UnlockBits(bitmapData);
+                    }
+                    // save to folder
+                    nameBitmap = PATH + "/file-" + fileGuid + ".png";
+                    bitmap.Save(nameBitmap, System.Drawing.Imaging.ImageFormat.Png);
+
+                    // save to stream as PNG
+                    bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                    byteArray = ms.ToArray();
+                }
+            }
+            string FileVirtualPath = Path.Combine(PATH, nameBitmap);
+            //return File(FileVirtualPath, "application/force-download", nameBitmap);
+            //return byteArray;
+            return conv = Convert.ToBase64String(byteArray);
 
         }
 

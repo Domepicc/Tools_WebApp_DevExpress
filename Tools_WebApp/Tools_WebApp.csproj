@@ -316,7 +316,6 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
-    <Content Include="Image\Acquisisci schermata Web.jpeg" />
     <Content Include="Scripts\aspnet\dx.aspnet.data.js" />
     <Content Include="Scripts\aspnet\dx.aspnet.mvc.js" />
     <Content Include="Scripts\bootstrap.js" />
@@ -425,6 +424,7 @@
     <Content Include="Views\Shared\_AlertDanger.cshtml" />
     <Content Include="Views\Tools\_GridViewPartial.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\Tools\ToolReport.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

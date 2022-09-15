@@ -1,23 +1,9 @@
 @using DevExtreme.AspNet.Mvc;
 @using System.Web.UI.WebControls;
 
-<script>
 
-        function createReport(stringId) {
-            console.log(stringId);
 
-            $.ajax({
 
-                async: true,
-                url: "/Tools/GridViewPartialCreateReport/" + stringId ,
-                type: "GET",
-                success: function () {
-                    window.open("https://localhost:44340/Tools/GridViewPartialCreateReport/" + stringId );
-                }
-            });
-    };
-
-</script>
 
 @{
 
@@ -30,15 +16,18 @@
             Action = "GridViewPartial"
         };
 
-        //settings.SettingsEditing.UpdateRowRouteValues = new { Controller = "Tools", Action = "GridViewPartialCreateReport" };
+        settings.SettingsEditing.AddNewRowRouteValues = new { Controller = "Tools", Action = "GridViewPartialAddNew" };
+        settings.SettingsEditing.UpdateRowRouteValues = new { Controller = "Tools", Action = "GridViewPartialUpdate" };
+        settings.SettingsEditing.DeleteRowRouteValues = new { Controller = "Tools", Action = "GridViewPartialDelete" };
+
         settings.SettingsEditing.Mode = GridViewEditingMode.EditFormAndDisplayRow;
         settings.SettingsBehavior.ConfirmDelete = true;
 
         settings.CommandColumn.Visible = true;
 
-        //settings.CommandColumn.ShowEditButton = true;
-
-
+        settings.CommandColumn.ShowNewButton = true;
+        settings.CommandColumn.ShowEditButton = true;
+        settings.CommandColumn.ShowDeleteButton = true;
 
         settings.KeyFieldName = "IdTool";
 
@@ -75,8 +64,34 @@
                 {
                     b.Name = "Create_Report_Button" + c.KeyValue;
                     b.Text = "Download";
-                    b.RouteValues = new { Controller = "Tools", Action = "GridViewPartialCreateReport", id = c.KeyValue.ToString() };
-                    //b.ClientSideEvents.Click = $"createReport({c.KeyValue.ToString()})";
+                    //b.RouteValues = new { Controller = "Tools", Action = "GridViewPartialReportDownload", id = c.KeyValue.ToString() };
+                    string ReportDownloadLink = "https://localhost:44340/Tools/GridViewPartialReportDownload/" + c.KeyValue.ToString();
+                    string ReportDownloadString = string.Format("function(s, e) {{  window.location= '{0}' }}", ReportDownloadLink);
+                    b.ClientSideEvents.Click = ReportDownloadString;
+                }).GetHtml();
+            });
+        });
+
+        settings.Columns.Add(column =>
+        {
+            column.VisibleIndex = settings.Columns.Count + 1;
+            column.FieldName = "Unbound";
+            column.Caption = "Report Preview";
+            column.UnboundType = DevExpress.Data.UnboundColumnType.String;
+            column.EditFormSettings.Visible = DevExpress.Utils.DefaultBoolean.False;
+            column.Width = Unit.Percentage(10);
+            column.SetDataItemTemplateContent((c) =>
+            {
+
+                Html.DevExpress().Button(b =>
+                {
+                    b.Name = "Report_Preview_Button" + c.KeyValue;
+                    b.Text = "Preview";
+                    //b.RouteValues = new { Controller = "Tools", Action = "GridViewPartialReportPreview", id = c.KeyValue.ToString() };
+                    string ReportPreviewtLink = "https://localhost:44340/Tools/GridViewPartialReportPreview/" + c.KeyValue.ToString();
+                    //string ReportPreviewString = string.Format("function(s, e) {{ $.ajax({{  async: false,  success: function () {{ window.open( '{0}' ) }} }}); }}", ReportPreviewtLink);
+                    string ReportPreviewString = string.Format("function(s, e) {{  window.open( '{0}' ) }}", ReportPreviewtLink);
+                    b.ClientSideEvents.Click = ReportPreviewString;
                 }).GetHtml();
             });
         });
@@ -90,6 +105,7 @@
 
 }
 @grid.Bind(Model).GetHtml()
+
 
 
 

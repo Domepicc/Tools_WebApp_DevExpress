@@ -7,6 +7,8 @@
     </siteMapNode>
     <siteMapNode url="Chart.aspx" title="Chart">
     </siteMapNode>
+    <siteMapNode url="Dashboard.aspx" title="Dashboard">
+    </siteMapNode>
     <siteMapNode url="Scheduler.aspx" title="Scheduler">
     </siteMapNode>
     <siteMapNode url="Article.aspx" title="Article">
