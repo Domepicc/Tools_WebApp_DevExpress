@@ -2,11 +2,7 @@
 @using System.Web.UI.WebControls;
 
 
-
-
-
 @{
-
     var grid = Html.DevExpress().GridView(settings =>
     {
         settings.Name = "GridView";
@@ -15,7 +11,6 @@
             Controller = "Tools",
             Action = "GridViewPartial"
         };
-
         settings.SettingsEditing.AddNewRowRouteValues = new { Controller = "Tools", Action = "GridViewPartialAddNew" };
         settings.SettingsEditing.UpdateRowRouteValues = new { Controller = "Tools", Action = "GridViewPartialUpdate" };
         settings.SettingsEditing.DeleteRowRouteValues = new { Controller = "Tools", Action = "GridViewPartialDelete" };
@@ -28,6 +23,19 @@
         settings.CommandColumn.ShowNewButton = true;
         settings.CommandColumn.ShowEditButton = true;
         settings.CommandColumn.ShowDeleteButton = true;
+
+        settings.SettingsBehavior.AllowClientEventsOnLoad = true;
+        settings.ClientSideEvents.CustomButtonClick = "ReportPreview_Button";
+
+        settings.CommandColumn.CustomButtons.Add(new GridViewCommandColumnCustomButton()
+        {
+            ID = "ReportPreview",
+            Text = "ReportPreview",
+            Visibility = GridViewCustomButtonVisibility.AllDataRows
+        });
+
+
+
 
         settings.KeyFieldName = "IdTool";
 
@@ -49,6 +57,60 @@
         settings.Columns.Add("SecondarySupplier");
         settings.Columns.Add("Quantity");
 
+
+
+
+        settings.Columns.Add(column =>
+        {
+            column.VisibleIndex = settings.Columns.Count + 1;
+            column.FieldName = "Unbound";
+            column.Caption = "QrCode";
+            column.UnboundType = DevExpress.Data.UnboundColumnType.String;
+            column.EditFormSettings.Visible = DevExpress.Utils.DefaultBoolean.False;
+            column.Width = Unit.Percentage(10);
+
+            column.SetDataItemTemplateContent((c) =>
+            {
+
+                Html.DevExpress().BinaryImage(b =>
+                {
+                    b.Name = "Qr_Code_Button" + c.KeyValue;
+                    b.Properties.ClientSideEvents.Click = $"Qr_Code_Click({c.KeyValue})";
+                }).GetHtml();
+
+                Html.DevExpress().PopupControl(pc =>
+                {
+                    pc.Name = "QrCode_PopupControl" + c.KeyValue;
+                    pc.HeaderText = "Popup QrCode";
+                    pc.AllowResize = true;
+                    pc.ShowHeader = true;
+                    pc.ShowOnPageLoad = false;
+                    pc.AllowDragging = true;
+                    pc.PopupHorizontalAlign = PopupHorizontalAlign.WindowCenter;
+                    pc.PopupVerticalAlign = PopupVerticalAlign.WindowCenter;
+                    pc.CloseAction = CloseAction.OuterMouseClick;
+                    pc.CloseOnEscape = true;
+                    pc.Modal = true;
+
+                    pc.PopupElementID = "Qr_Code_Button" + c.KeyValue;
+
+                    pc.SetContent(() =>
+                    {
+
+                        ViewContext.Writer.Write(
+                            Html.DevExpress().BinaryImage(b =>
+                            {
+                                b.Name = "Qr_Code_Button_Popup" + c.KeyValue;
+                                b.Properties.ClientSideEvents.Click = $"Qr_Code_Popup({c.KeyValue})";
+                                b.Width = 300;
+                            }).GetHtml()
+                         );
+                    });
+                }).GetHtml();
+
+            });
+        });
+
         settings.Columns.Add(column =>
         {
             column.VisibleIndex = settings.Columns.Count + 1;
@@ -69,6 +131,10 @@
                     string ReportDownloadString = string.Format("function(s, e) {{  window.location= '{0}' }}", ReportDownloadLink);
                     b.ClientSideEvents.Click = ReportDownloadString;
                 }).GetHtml();
+
+
+
+
             });
         });
 
@@ -87,12 +153,12 @@
                 {
                     b.Name = "Report_Preview_Button" + c.KeyValue;
                     b.Text = "Preview";
-                    //b.RouteValues = new { Controller = "Tools", Action = "GridViewPartialReportPreview", id = c.KeyValue.ToString() };
-                    string ReportPreviewtLink = "https://localhost:44340/Tools/GridViewPartialReportPreview/" + c.KeyValue.ToString();
-                    //string ReportPreviewString = string.Format("function(s, e) {{ $.ajax({{  async: false,  success: function () {{ window.open( '{0}' ) }} }}); }}", ReportPreviewtLink);
-                    string ReportPreviewString = string.Format("function(s, e) {{  window.open( '{0}' ) }}", ReportPreviewtLink);
+                    string ReportPreviewLink = "https://localhost:44340/Tools/GridViewPartialReportPreview/" + c.KeyValue.ToString();
+                    string ReportPreviewString = string.Format("function(s, e) {{  window.open( '{0}' ) }}", ReportPreviewLink);
                     b.ClientSideEvents.Click = ReportPreviewString;
+
                 }).GetHtml();
+
             });
         });
 
@@ -100,11 +166,40 @@
 
     if (ViewData["EditError"] != null)
     {
-        grid.SetEditErrorText((string)ViewData["EditError"]);
+        grid.SetEditErrorText((string) ViewData["EditError"]);
     }
 
 }
+
 @grid.Bind(Model).GetHtml()
+
+
+
+@Html.DevExpress().PopupControl(pc2 =>
+{
+    pc2.Name = "Report_PopupControl" ;
+    pc2.HeaderText = "Popup QrCode";
+    pc2.AllowResize = true;
+    pc2.ShowHeader = true;
+    pc2.ShowOnPageLoad = false;
+    pc2.AllowDragging = true;
+    pc2.PopupHorizontalAlign = PopupHorizontalAlign.WindowCenter;
+    pc2.PopupVerticalAlign = PopupVerticalAlign.WindowCenter;
+    pc2.CloseAction = CloseAction.OuterMouseClick;
+    pc2.CloseOnEscape = true;
+    pc2.Modal = false;
+    pc2.SetContent(() =>
+    {
+        ViewContext.Writer.Write(
+
+                "<div id='report_int'> </div>"
+            );
+    });
+
+}).GetHtml();
+
+<div id='report'> </div>
+
 
 
 

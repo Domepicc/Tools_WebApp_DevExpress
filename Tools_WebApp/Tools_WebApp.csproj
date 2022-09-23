@@ -234,13 +234,6 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Chart.aspx.cs">
-      <DependentUpon>Chart.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Chart.aspx.designer.cs">
-      <DependentUpon>Chart.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Commands\CreateToolCommand.cs" />
     <Compile Include="Commands\CreateToolCommandHandler.cs" />
     <Compile Include="Commands\DeleteCommand.cs" />
@@ -278,7 +271,6 @@
     <Compile Include="Validator\NotNegativeNumber.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Chart.aspx" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
@@ -424,11 +416,12 @@
     <Content Include="Views\Shared\_AlertDanger.cshtml" />
     <Content Include="Views\Tools\_GridViewPartial.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\Tools\_ToolReport.cshtml" />
     <Content Include="Views\Tools\ToolReport.cshtml" />
+    <Content Include="Views\Tools\TestViewTest.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Tool\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

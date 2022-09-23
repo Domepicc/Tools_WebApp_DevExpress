@@ -21,7 +21,6 @@ using System.Configuration;
 namespace Tools_WebApp.Controllers
 {
 
-
     public class ToolsController : Controller
     {
         private readonly IQuery<Tool> _query;
@@ -118,6 +117,15 @@ namespace Tools_WebApp.Controllers
             return View();
         }
 
+
+
+
+        public ActionResult TestViewTest(string id)
+        {
+            return PartialView("TestViewTest");
+        }
+
+
         [ValidateInput(false)]
         public ActionResult GridViewPartial()
         {
@@ -145,13 +153,10 @@ namespace Tools_WebApp.Controllers
         {
             Tool item = _query.ReadById(id);
             Byte[] qrCore = CreateQrCode(item.BoschCode, SIZE_QR_CORE);
-
-            // CQRS !!
-            //ReportTool reportTool = new ReportTool(item);
-            //reportTool.QrCode = qrCore;
-
-            return View("ToolReport", item);
+            return PartialView("ToolReport", item);
         }
+
+
 
         [System.Web.Http.HttpGet, ValidateInput(false)]
         [System.Web.Http.Route("/Tools/GridViewPartialReportDownload/")]
@@ -165,7 +170,6 @@ namespace Tools_WebApp.Controllers
         [HttpPost, ValidateInput(false)]
         public ActionResult GridViewPartialUpdate([ModelBinder(typeof(DevExpressEditorsBinder))] Tools_WebApp.Models.Tool item)
         {
-            var model = db.Tools;
             if (ModelState.IsValid)
             {
                 CreateToolCommand command = new CreateToolCommand(item);
