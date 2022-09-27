@@ -70,42 +70,36 @@
     //}
 
 
-
-
-
-
-
-    function Qr_Code_Click(stringId) {
+    function Qr_Code_Column(nameButton, stringId) {
         $.ajax({
             url: "/Tools/GetQrCode/" + stringId,
             type: "GET",
             async: false,
             success: function (result) {
-                $("#Qr_Code_Button" + stringId).attr("src", 'data:image/png;base64,' + result);
-        
+                $("#" + nameButton + stringId).attr("src", 'data:image/png;base64,' + result);
             }
         });
     }
 
-    function Qr_Code_Popup(stringId) {
-        $.ajax({
-            url: "/Tools/GetQrCode/" + stringId,
-            type: "GET",
-            async: false,
-            success: function (result) {
+    function OnPopupShowh(s, e) {
+        s.SetWidth($(window).width() * 0.4);
+        s.SetHeight($(window).height() * 0.5);
+        s.UpdatePosition();
+    }  
 
-                $("#Qr_Code_Button_Popup" + stringId).attr("src", 'data:image/png;base64,' + result);
-            }
-        });
+    function Test(s, e) {
+        console.log("function test");
     }
 
 
+    function ReportPreview_Button(s, e) {
 
-    function ReportPreview_Button(s, e ) {
-        console.log("OnShowingPopup");
+        $("#report_int").attr("align", "");
 
         var stringId = GridView.GetRowKey(e.visibleIndex);
-
+        if (stringId == null) {
+            stringId = e;
+        }
         $.ajax({
             url: "/Tools/GridViewPartialReportPreview/" + stringId,
             type: "GET",
@@ -113,15 +107,31 @@
             success: function (result) {
                 $("#report_int").html(result);
                 Report_PopupControl.Show();
-
             }
         });
-        
     }
 
+    function QrCore_Click(stringId) {
 
+        var img = document.createElement("img");
+        $("#report_int").attr("align", "center");
 
+        $.ajax({
+            url: "/Tools/GetQrCode/" + stringId,
+            type: "GET",
+            async: false,
+            success: function (result) {
 
+                img.setAttribute("src", 'data:image/png;base64,' + result);
+                img.height = 300;
+                img.width = 300;
+
+                $("#report_int").html(img);
+
+                Report_PopupControl.Show();
+            }
+        });
+    }
 
 
 
