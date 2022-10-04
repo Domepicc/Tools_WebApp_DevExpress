@@ -2,14 +2,20 @@
 @using System.Web.UI.WebControls;
 
 
+
+
 @{
+
+
     var grid = Html.DevExpress().GridView(settings =>
     {
-        settings.Name = "GridView";
+
+        settings.Name = "GridViewTools";
+
         settings.CallbackRouteValues = new
         {
             Controller = "Tools",
-            Action = "GridViewPartial"
+            Action = "GridViewPartial",
         };
 
         settings.SettingsEditing.AddNewRowRouteValues = new { Controller = "Tools", Action = "GridViewPartialAddNew" };
@@ -26,14 +32,21 @@
         settings.CommandColumn.ShowDeleteButton = true;
 
         settings.SettingsBehavior.AllowClientEventsOnLoad = true;
-        settings.ClientSideEvents.CustomButtonClick = "ReportPreview_Button";
 
+
+
+        settings.ClientSideEvents.CustomButtonClick = "ReportPreview_Button";
         settings.CommandColumn.CustomButtons.Add(new GridViewCommandColumnCustomButton()
         {
             ID = "ReportPreview",
             Text = "ReportPreview",
             Visibility = GridViewCustomButtonVisibility.AllDataRows
         });
+        
+
+        settings.SettingsPager.PageSizeItemSettings.Visible = true;
+        settings.SettingsPager.PageSizeItemSettings.ShowAllItem = true;
+        settings.SettingsPager.PageSizeItemSettings.Position = PagerPageSizePosition.Left;
 
         settings.KeyFieldName = "IdTool";
 
@@ -55,6 +68,17 @@
         settings.Columns.Add("SecondarySupplier");
         settings.Columns.Add("Quantity");
 
+        GridViewFormatConditionColorScale format1 = new GridViewFormatConditionColorScale();
+        format1.FieldName = "Quantity";
+        format1.Format = GridConditionColorScaleFormat.Custom;
+        format1.MaximumColor = System.Drawing.Color.ForestGreen;
+        format1.MinimumColor = System.Drawing.Color.LightGreen;
+        format1.MinimumValue = ViewData["Min"];
+        format1.MaximumValue = ViewData["Max"];
+
+
+        settings.FormatConditions.Add(format1);
+
         settings.Columns.Add(column =>
         {
             column.VisibleIndex = settings.Columns.Count + 1;
@@ -68,11 +92,11 @@
             {
                 Html.DevExpress().BinaryImage(b =>
                 {
-                    b.Name = "Qr_Code_Button" + c.KeyValue;
-                    b.Properties.ClientSideEvents.Click = $"Qr_Code_Column('Qr_Code_Button', {c.KeyValue})";
 
-                    b.Properties.ClientSideEvents.SetEventHandler("Init", $"Qr_Code_Column('Qr_Code_Button', {c.KeyValue})");
-                    b.Properties.ClientSideEvents.SetEventHandler("Click", $"function(s, e) {{ QrCore_Click( {c.KeyValue} ) }}");
+                    b.Name = "Qr_Code_Button" + c.KeyValue;
+                    b.Properties.ClientSideEvents.BeginCallback = $"Qr_Code_Column('Qr_Code_Button', '{c.KeyValue}')";
+                    b.Properties.ClientSideEvents.Click = $"function(s, e) {{ QrCore_Click( {c.KeyValue} ) }}";
+
 
                 }).GetHtml();
             });
@@ -100,6 +124,8 @@
             });
         });
 
+
+
         settings.Columns.Add(column =>
         {
             column.VisibleIndex = settings.Columns.Count + 1;
@@ -120,12 +146,16 @@
                 }).GetHtml();
             });
         });
+
+
     });
 
     if (ViewData["EditError"] != null)
     {
-        grid.SetEditErrorText((string) ViewData["EditError"]);
+        grid.SetEditErrorText((string)ViewData["EditError"]);
     }
+
+
 }
 
 @grid.Bind(Model).GetHtml()
@@ -153,7 +183,7 @@
                 "<div id='report_int'> </div>"
             );
     });
-}).GetHtml();
+}).GetHtml()
 
 
 

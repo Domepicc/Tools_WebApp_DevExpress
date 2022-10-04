@@ -21,6 +21,22 @@ namespace Tools_WebApp.Queries
             }
         }
 
+        public int? GetMinQuantityValue()
+        {
+            using (MyDBContext myDb = new MyDBContext())
+            {
+                return myDb.Tools.Min(t => t.Quantity);
+            }
+        }
+
+        public int? GetMaxQuantityValue()
+        {
+            using (MyDBContext myDb = new MyDBContext())
+            {
+                return myDb.Tools.Max(t => t.Quantity);
+            }
+        }
+
         public Tool ReadById(string id)
         {
             using (MyDBContext myDb = new MyDBContext())

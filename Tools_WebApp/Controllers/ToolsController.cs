@@ -117,19 +117,12 @@ namespace Tools_WebApp.Controllers
             return View();
         }
 
-
-
-
-        public ActionResult TestViewTest(string id)
-        {
-            return PartialView("TestViewTest");
-        }
-
-
         [ValidateInput(false)]
         public ActionResult GridViewPartial()
         {
             var model = db.Tools;
+            ViewData["Min"] = _query.GetMinQuantityValue();
+            ViewData["Max"] = _query.GetMaxQuantityValue();
             return PartialView("_GridViewPartial", _query.ReadAll());
         }
 
@@ -151,11 +144,15 @@ namespace Tools_WebApp.Controllers
         [System.Web.Http.Route("/Tools/GridViewPartialReportPreview/")]
         public ActionResult GridViewPartialReportPreview(string id)
         {
-            Tool item = _query.ReadById(id);
+            string IdTool = id;
+            
+            Console.WriteLine(IdTool);
+            Tool item = _query.ReadById(IdTool);
             Byte[] qrCore = CreateQrCode(item.BoschCode, SIZE_QR_CORE);
             return PartialView("ToolReport", item);
-        }
+           
 
+        }
 
 
         [System.Web.Http.HttpGet, ValidateInput(false)]
@@ -192,17 +189,12 @@ namespace Tools_WebApp.Controllers
             return PartialView("_GridViewPartial", _query.ReadAll());
         }
 
-        Tools_WebApp.Models.MyDBContext db1 = new Tools_WebApp.Models.MyDBContext();
 
         [ValidateInput(false)]
         public ActionResult DataViewPartial()
         {
-            var model = db1.Tools;
             return PartialView("_DataViewPartial", _query.ReadAll());
         }
-
-
-
 
         public Byte[] CreateQrCode(string qrText, int sizeQrCode = 150)
         {

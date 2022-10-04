@@ -3,6 +3,17 @@
 
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
 
+
+
+@Html.DevExpress().GetStyleSheets(
+        new StyleSheet { ExtensionSuite = ExtensionSuite.NavigationAndLayout },
+        new StyleSheet { ExtensionSuite = ExtensionSuite.Editors }
+    )
+@Html.DevExpress().GetScripts(
+    new Script { ExtensionSuite = ExtensionSuite.NavigationAndLayout },
+    new Script { ExtensionSuite = ExtensionSuite.Editors }
+)
+
 @*<div>
         <center>
             <img hidden="hidden" id="loadingGif" name="loadingGif" src="https://1.bp.blogspot.com/-otKDpgCbh88/VKV6xDtHvoI/AAAAAAAAB_E/sDikYkQN8fg/s1600/Page-loading-effect-blogger.gifalt=" alt="Loading GIF" width="50" height="50">
@@ -16,134 +27,61 @@
 
     </div>*@
 
-@Html.DevExpress().GetStyleSheets(
-        new StyleSheet { ExtensionSuite = ExtensionSuite.NavigationAndLayout },
-        new StyleSheet { ExtensionSuite = ExtensionSuite.Editors }
-    )
-@Html.DevExpress().GetScripts(
-    new Script { ExtensionSuite = ExtensionSuite.NavigationAndLayout },
-    new Script { ExtensionSuite = ExtensionSuite.Editors }
-)
+
+<script src="~/Scripts/GridViewPartialScripts.js"></script>
+<script>
+
+     //var input = document.getElementById("inputToolId");
+                //$(document).ready(input.addEventListener("keyup", onKeyUpInputToolId));
+
+                //$(document).ready(function () {
+                //    $("#searchTools").click(function () {
+                //        var stringId = $("#inputToolId").val();
+                //        getToolsByPartiald(stringId);
+                //    })
+                //})
+
+                //function onKeyUpInputToolId() {
+                //    var stringId = $("#inputToolId").val();
+                //    console.log(stringId);
+                //    if (stringId.length >= 2) {
+                //        getToolsByPartiald(stringId);
+                //    }
+                //}
+
+
+                //function getToolsByPartiald(stringId) {
+                //    $.ajax({
+                //        url: "/Tools/GetByPartialId/" + stringId,
+                //        type: "GET",
+                //        async: false,
+                //        success: function (result) {
+                //            $('#loadingGif').show("slow");
+                //            showTable(result)
+                //            $('#loadingGif').hide("slow");
+
+                //        }
+                //    });
+                //}
+
+                //function showTable(result) {
+                //    $('#container').html(result);
+                //}
 
 
 
 
 
 
-<script type="text/javascript">
+                //$(document).ready(function () {
+                //    $("#downloadReport").click(function () {
 
-    //var input = document.getElementById("inputToolId");
-    //$(document).ready(input.addEventListener("keyup", onKeyUpInputToolId));
-
-    //$(document).ready(function () {
-    //    $("#searchTools").click(function () {
-    //        var stringId = $("#inputToolId").val();
-    //        getToolsByPartiald(stringId);
-    //    })
-    //})
-
-    //function onKeyUpInputToolId() {
-    //    var stringId = $("#inputToolId").val();
-    //    console.log(stringId);
-    //    if (stringId.length >= 2) {
-    //        getToolsByPartiald(stringId);
-    //    }
-    //}
-
-
-    //function getToolsByPartiald(stringId) {
-    //    $.ajax({
-    //        url: "/Tools/GetByPartialId/" + stringId,
-    //        type: "GET",
-    //        async: false,
-    //        success: function (result) {
-    //            $('#loadingGif').show("slow");
-    //            showTable(result)
-    //            $('#loadingGif').hide("slow");
-
-    //        }
-    //    });
-    //}
-
-    //function showTable(result) {
-    //    $('#container').html(result);
-    //}
-
-
-    function Qr_Code_Column(nameButton, stringId) {
-        $.ajax({
-            url: "/Tools/GetQrCode/" + stringId,
-            type: "GET",
-            async: false,
-            success: function (result) {
-                $("#" + nameButton + stringId).attr("src", 'data:image/png;base64,' + result);
-            }
-        });
-    }
-
-    function OnPopupShowh(s, e) {
-        s.SetWidth($(window).width() * 0.4);
-        s.SetHeight($(window).height() * 0.5);
-        s.UpdatePosition();
-    }  
-
-    function Test(s, e) {
-        console.log("function test");
-    }
-
-
-    function ReportPreview_Button(s, e) {
-
-        $("#report_int").attr("align", "");
-
-        var stringId = GridView.GetRowKey(e.visibleIndex);
-        if (stringId == null) {
-            stringId = e;
-        }
-        $.ajax({
-            url: "/Tools/GridViewPartialReportPreview/" + stringId,
-            type: "GET",
-            async: false,
-            success: function (result) {
-                $("#report_int").html(result);
-                Report_PopupControl.Show();
-            }
-        });
-    }
-
-    function QrCore_Click(stringId) {
-
-        var img = document.createElement("img");
-        $("#report_int").attr("align", "center");
-
-        $.ajax({
-            url: "/Tools/GetQrCode/" + stringId,
-            type: "GET",
-            async: false,
-            success: function (result) {
-
-                img.setAttribute("src", 'data:image/png;base64,' + result);
-                img.height = 300;
-                img.width = 300;
-
-                $("#report_int").html(img);
-
-                Report_PopupControl.Show();
-            }
-        });
-    }
-
-
-
-    //$(document).ready(function () {
-    //    $("#downloadReport").click(function () {
-
-    //        var stringId = $("#idTool").val();
-    //        window.location = "https://localhost:44340/Tools/GridViewPartialReportDownload/" + stringId;
-    //    });
-    //})
-
-
+                //        var stringId = $("#idTool").val();
+                //        window.location = "https://localhost:44340/Tools/GridViewPartialReportDownload/" + stringId;
+                //    });
+                //})
 </script>
+                   
+
 
 @Html.Action("GridViewPartial")

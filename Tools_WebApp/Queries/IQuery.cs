@@ -20,6 +20,10 @@ namespace Tools_WebApp.Queries
 
         bool Update(T item, string key);
 
+        int? GetMinQuantityValue();
+
+        int? GetMaxQuantityValue();
+
 
     }
 }
