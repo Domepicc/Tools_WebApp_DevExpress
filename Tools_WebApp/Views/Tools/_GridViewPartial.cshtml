@@ -35,14 +35,14 @@
 
 
 
-        settings.ClientSideEvents.CustomButtonClick = "ReportPreview_Button";
+        settings.ClientSideEvents.CustomButtonClick = "OnGetRowValue";
         settings.CommandColumn.CustomButtons.Add(new GridViewCommandColumnCustomButton()
         {
             ID = "ReportPreview",
             Text = "ReportPreview",
             Visibility = GridViewCustomButtonVisibility.AllDataRows
         });
-        
+
 
         settings.SettingsPager.PageSizeItemSettings.Visible = true;
         settings.SettingsPager.PageSizeItemSettings.ShowAllItem = true;
@@ -116,8 +116,8 @@
                 {
                     b.Name = "Create_Report_Button" + c.KeyValue;
                     b.Text = "Download";
-                    //b.RouteValues = new { Controller = "Tools", Action = "GridViewPartialReportDownload", id = c.KeyValue.ToString() };
-                    string ReportDownloadLink = "https://localhost:44340/Tools/GridViewPartialReportDownload/" + c.KeyValue.ToString();
+            //b.RouteValues = new { Controller = "Tools", Action = "GridViewPartialReportDownload", id = c.KeyValue.ToString() };
+            string ReportDownloadLink = "https://localhost:44340/Tools/GridViewPartialReportDownload/" + c.KeyValue.ToString();
                     string ReportDownloadString = string.Format("function(s, e) {{  window.location= '{0}' }}", ReportDownloadLink);
                     b.ClientSideEvents.Click = ReportDownloadString;
                 }).GetHtml();
@@ -148,6 +148,8 @@
         });
 
 
+
+
     });
 
     if (ViewData["EditError"] != null)
@@ -162,28 +164,7 @@
 
 
 
-@Html.DevExpress().PopupControl(pc2 =>
-{
 
-    pc2.Name = "Report_PopupControl" ;
-    pc2.HeaderText = "Popup QrCode";
-    pc2.AllowResize = true;
-    pc2.ShowHeader = true;
-    pc2.ShowOnPageLoad = false;
-    pc2.AllowDragging = true;
-    pc2.PopupHorizontalAlign = PopupHorizontalAlign.WindowCenter;
-    pc2.PopupVerticalAlign = PopupVerticalAlign.WindowCenter;
-    pc2.CloseAction = CloseAction.OuterMouseClick;
-    pc2.CloseOnEscape = true;
-    pc2.ClientSideEvents.PopUp = "OnPopupShowh";
-
-    pc2.SetContent(() =>
-    {
-        ViewContext.Writer.Write(
-                "<div id='report_int'> </div>"
-            );
-    });
-}).GetHtml()
 
 
 

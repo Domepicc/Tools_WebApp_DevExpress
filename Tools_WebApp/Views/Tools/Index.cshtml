@@ -31,57 +31,59 @@
 <script src="~/Scripts/GridViewPartialScripts.js"></script>
 <script>
 
-     //var input = document.getElementById("inputToolId");
-                //$(document).ready(input.addEventListener("keyup", onKeyUpInputToolId));
+             //var input = document.getElementById("inputToolId");
+                        //$(document).ready(input.addEventListener("keyup", onKeyUpInputToolId));
 
-                //$(document).ready(function () {
-                //    $("#searchTools").click(function () {
-                //        var stringId = $("#inputToolId").val();
-                //        getToolsByPartiald(stringId);
-                //    })
-                //})
+                        //$(document).ready(function () {
+                        //    $("#searchTools").click(function () {
+                        //        var stringId = $("#inputToolId").val();
+                        //        getToolsByPartiald(stringId);
+                        //    })
+                        //})
 
-                //function onKeyUpInputToolId() {
-                //    var stringId = $("#inputToolId").val();
-                //    console.log(stringId);
-                //    if (stringId.length >= 2) {
-                //        getToolsByPartiald(stringId);
-                //    }
-                //}
-
-
-                //function getToolsByPartiald(stringId) {
-                //    $.ajax({
-                //        url: "/Tools/GetByPartialId/" + stringId,
-                //        type: "GET",
-                //        async: false,
-                //        success: function (result) {
-                //            $('#loadingGif').show("slow");
-                //            showTable(result)
-                //            $('#loadingGif').hide("slow");
-
-                //        }
-                //    });
-                //}
-
-                //function showTable(result) {
-                //    $('#container').html(result);
-                //}
+                        //function onKeyUpInputToolId() {
+                        //    var stringId = $("#inputToolId").val();
+                        //    console.log(stringId);
+                        //    if (stringId.length >= 2) {
+                        //        getToolsByPartiald(stringId);
+                        //    }
+                        //}
 
 
+                        //function getToolsByPartiald(stringId) {
+                        //    $.ajax({
+                        //        url: "/Tools/GetByPartialId/" + stringId,
+                        //        type: "GET",
+                        //        async: false,
+                        //        success: function (result) {
+                        //            $('#loadingGif').show("slow");
+                        //            showTable(result)
+                        //            $('#loadingGif').hide("slow");
+
+                        //        }
+                        //    });
+                        //}
+
+                        //function showTable(result) {
+                        //    $('#container').html(result);
+                        //}
 
 
 
 
-                //$(document).ready(function () {
-                //    $("#downloadReport").click(function () {
 
-                //        var stringId = $("#idTool").val();
-                //        window.location = "https://localhost:44340/Tools/GridViewPartialReportDownload/" + stringId;
-                //    });
-                //})
+
+                        //$(document).ready(function () {
+                        //    $("#downloadReport").click(function () {
+
+                        //        var stringId = $("#idTool").val();
+                        //        window.location = "https://localhost:44340/Tools/GridViewPartialReportDownload/" + stringId;
+                        //    });
+                        //})
 </script>
-                   
+
 
 
 @Html.Action("GridViewPartial")
+@Html.Partial("_PopupView")
+

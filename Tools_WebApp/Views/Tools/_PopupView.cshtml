@@ -1,0 +1,23 @@
+﻿
+
+@Html.DevExpress().PopupControl(pc =>
+{
+
+    pc.Name = "Report_PopupControl";
+    pc.HeaderText = "Popup QrCode";
+    pc.ShowHeader = true;
+    pc.ShowOnPageLoad = false;
+    pc.AllowDragging = true;
+    pc.PopupHorizontalAlign = PopupHorizontalAlign.WindowCenter;
+    pc.PopupVerticalAlign = PopupVerticalAlign.WindowCenter;
+    pc.CloseAction = CloseAction.OuterMouseClick;
+    pc.CloseOnEscape = true;
+    pc.ClientSideEvents.PopUp = "OnPopupShow";
+
+    pc.SetContent(() =>
+    {
+        ViewContext.Writer.Write(
+                "<div id='report_int'> </div>"
+            );
+    });
+}).GetHtml()

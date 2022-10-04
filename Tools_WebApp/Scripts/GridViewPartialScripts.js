@@ -14,47 +14,28 @@
         });
     }
 
-    function OnPopupShowh(s, e) {
+function OnPopupShow(s, e) {
         s.SetWidth($(window).width() * 0.4);
         s.SetHeight($(window).height() * 0.5);
         s.UpdatePosition();
     }
 
-    function TestGetRowValue(s, e) {
+    function OnGetRowValue(s, e) {
 
         console.log("buttonId in TestGetRowValue " + e.buttonID);
-        GridViewTools.GetRowValues(e.visibleIndex, 'BoschCode', ReportPreview_Button);
+        GridViewTools.GetRowValues(e.visibleIndex, 'IdTool', ReportPreview_Button);
         console.log("buttonId in TestGetRowValue " + e.buttonID);
 
     }
 
 
-    //function ReportPreview_Button(value) {
-    //    console.log("Value in ReportPreviewButton: " + value);
+    function ReportPreview_Button(value) {
+        var stringId = value;
 
-
-
-        //$("#report_int").attr("align", "");
-        //if (stringId == null) {
-        //    console.log("string null");
-        //}
-        //else {
-        //    $.ajax({
-        //        url: "/Tools/GridViewPartialReportPreview/" + stringId,
-        //        type: "GET",
-        //        success: function (result) {
-        //            $("#report_int").html(result);
-        //            Report_PopupControl.Show();
-        //        }
-        //    });
-        //}
-    //}
-
-    function ReportPreview_Button(s, e) {
+        console.log("ReportPreview_Button" + stringId);
 
         $("#report_int").attr("align", "");
-
-        var stringId = GridViewTools.GetRowKey(e.visibleIndex);
+        //var stringId = GridViewTools.GetRowKey(e.visibleIndex);
         //console.log("Gridview       in ReportPreview " + GridView.toString());
         //console.log("e.visibleIndex in ReportPreview " + e.visibleIndex);
         //console.log("stringId       in ReportPreview " + stringId);
