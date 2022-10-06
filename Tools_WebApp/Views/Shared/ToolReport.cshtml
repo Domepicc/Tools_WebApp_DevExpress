@@ -1,5 +1,10 @@
 ﻿
-
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    // esce un errore perché dev express è già definito in questo layout.
+    // questa  partial view viene usata in due occasioni, una ha bisogno del Layout
+    // e in un'altra è già definito
+}
 
 <script>
 
@@ -30,4 +35,4 @@
 
 </script>
 
-@{Html.RenderPartial("_ToolReport");}
+@{Html.RenderPartial("~/Views/Tools/_ToolReport");}

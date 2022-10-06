@@ -428,6 +428,7 @@
     <Content Include="Views\Tools\ToolReport.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Tools\_PopupView.cshtml" />
+    <Content Include="Views\Shared\ToolReport.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

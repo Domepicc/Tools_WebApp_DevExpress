@@ -15,8 +15,7 @@ using Tools_WebApp.Queries;
 using ZXing.QrCode;
 using HttpPostAttribute = System.Web.Mvc.HttpPostAttribute;
 using System.Configuration;
-
-
+using NPOI.HSSF.UserModel;
 
 namespace Tools_WebApp.Controllers
 {
@@ -126,10 +125,12 @@ namespace Tools_WebApp.Controllers
             return PartialView("_GridViewPartial", _query.ReadAll());
         }
 
+        #region New Edit Delete
         [HttpPost, ValidateInput(false)]
         public ActionResult GridViewPartialAddNew([ModelBinder(typeof(DevExpressEditorsBinder))] Tools_WebApp.Models.Tool item)
         {
-            var model = db.Tools;
+
+
             if (ModelState.IsValid)
             {                             
                 CreateToolCommand command = new CreateToolCommand(item);
@@ -137,31 +138,11 @@ namespace Tools_WebApp.Controllers
             }
             else
                 ViewData["EditError"] = "Please, correct all errors.";
+
+            ViewData["Min"] = _query.GetMinQuantityValue();
+            ViewData["Max"] = _query.GetMaxQuantityValue();
+
             return PartialView("_GridViewPartial", _query.ReadAll());
-        }
-
-        [System.Web.Http.HttpGet, ValidateInput(false)]
-        [System.Web.Http.Route("/Tools/GridViewPartialReportPreview/")]
-        public ActionResult GridViewPartialReportPreview(string id)
-        {
-            string IdTool = id;
-            
-            Console.WriteLine(IdTool);
-            Tool item = _query.ReadById(IdTool);
-            Byte[] qrCore = CreateQrCode(item.BoschCode, SIZE_QR_CORE);
-            return PartialView("ToolReport", item);
-           
-
-        }
-
-
-        [System.Web.Http.HttpGet, ValidateInput(false)]
-        [System.Web.Http.Route("/Tools/GridViewPartialReportDownload/")]
-        public FileResult GridViewPartialReportDownload(string id)
-        {
-            Tool item = _query.ReadById(id);
-            Byte[] qrCore = CreateQrCode(item.BoschCode, SIZE_QR_CORE);
-            return CreateReport(item, qrCore);
         }
 
         [HttpPost, ValidateInput(false)]
@@ -174,27 +155,60 @@ namespace Tools_WebApp.Controllers
             }
             else
                 ViewData["EditError"] = "Please, correct all errors.";
+
+            ViewData["Min"] = _query.GetMinQuantityValue();
+            ViewData["Max"] = _query.GetMaxQuantityValue();
             return PartialView("_GridViewPartial", _query.ReadAll());
         }
 
         [HttpPost, ValidateInput(false)]
         public ActionResult GridViewPartialDelete([ModelBinder(typeof(DevExpressEditorsBinder))] Tools_WebApp.Models.Tool item)
         {
-            var model = db.Tools;
+
             if (item.IdTool != null)
             {
                 DeleteToolCommand command = new DeleteToolCommand(item.IdTool);
                 _command.Publish(command);
             }
+
+            ViewData["Min"] = _query.GetMinQuantityValue();
+            ViewData["Max"] = _query.GetMaxQuantityValue();
+
             return PartialView("_GridViewPartial", _query.ReadAll());
         }
 
+        #endregion
+
+        [System.Web.Http.HttpGet, ValidateInput(false)]
+        [System.Web.Http.Route("/Tools/GridViewPartialReportPreview/")]
+        public ActionResult GridViewPartialReportPreview(string id)
+        {
+            string IdTool = id;
+            
+            Console.WriteLine(IdTool);
+            Tool item = _query.ReadById(IdTool);
+            Byte[] qrCore = CreateQrCode(item.BoschCode, SIZE_QR_CORE);
+            return PartialView("ToolReport", item);
+          
+        }
+
+        [System.Web.Http.HttpGet, ValidateInput(false)]
+        [System.Web.Http.Route("/Tools/GridViewPartialReportDownload/")]
+        public FileResult GridViewPartialReportDownload(string id)
+        {
+            Tool item = _query.ReadById(id);
+            Byte[] qrCore = CreateQrCode(item.BoschCode, SIZE_QR_CORE);
+            return CreateReport(item, qrCore);
+        }
 
         [ValidateInput(false)]
         public ActionResult DataViewPartial()
         {
             return PartialView("_DataViewPartial", _query.ReadAll());
         }
+
+
+        #region Exel and QrCode Methods
 
         public Byte[] CreateQrCode(string qrText, int sizeQrCode = 150)
         {
@@ -229,10 +243,10 @@ namespace Tools_WebApp.Controllers
                     {
                         bitmap.UnlockBits(bitmapData);
                     }
-                    // save to folder
-                    // bitmap.Save(PATH + "/file-" + fileGuid + ".png", System.Drawing.Imaging.ImageFormat.Png);
+                    //save to folder
+                    //bitmap.Save(PATH + "/file-" + fileGuid + ".png", System.Drawing.Imaging.ImageFormat.Png);
 
-                    // save to stream as PNG
+                    //save as PNG
                     bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
                     byteArray = ms.ToArray();
                 }
@@ -246,48 +260,10 @@ namespace Tools_WebApp.Controllers
         public string GetQrCode(string qrText, int sizeQrCode = 150)
         {
             Byte[] byteArray;
-            string nameBitmap;
-            string fileGuid = Guid.NewGuid().ToString().Substring(0, 4);
             string conv;
-            var qrCodeWriter = new ZXing.BarcodeWriterPixelData
-            {
-                Format = ZXing.BarcodeFormat.QR_CODE,
-                Options = new QrCodeEncodingOptions
-                {
-                    Height = sizeQrCode,
-                    Width = sizeQrCode
-                }
-            };
-            var pixelData = qrCodeWriter.Write(qrText);
 
-            // creating a bitmap from the raw pixel data; if only black and white colors are used it makes no difference
-            // that the pixel data ist BGRA oriented and the bitmap is initialized with RGB
-            using (var bitmap = new System.Drawing.Bitmap(pixelData.Width, pixelData.Height, System.Drawing.Imaging.PixelFormat.Format32bppRgb))
-            {
-                using (var ms = new MemoryStream())
-                {
-                    var bitmapData = bitmap.LockBits(new System.Drawing.Rectangle(0, 0, pixelData.Width, pixelData.Height), System.Drawing.Imaging.ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format32bppRgb);
-                    try
-                    {
-                        // we assume that the row stride of the bitmap is aligned to 4 byte multiplied by the width of the image
-                        System.Runtime.InteropServices.Marshal.Copy(pixelData.Pixels, 0, bitmapData.Scan0, pixelData.Pixels.Length);
-                    }
-                    finally
-                    {
-                        bitmap.UnlockBits(bitmapData);
-                    }
-                    // save to folder
-                    nameBitmap = PATH + "/file-" + fileGuid + ".png";
-                    bitmap.Save(nameBitmap, System.Drawing.Imaging.ImageFormat.Png);
+            byteArray = CreateQrCode(qrText, sizeQrCode);
 
-                    // save to stream as PNG
-                    bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                    byteArray = ms.ToArray();
-                }
-            }
-            string FileVirtualPath = Path.Combine(PATH, nameBitmap);
-            //return File(FileVirtualPath, "application/force-download", nameBitmap);
-            //return byteArray;
             return conv = Convert.ToBase64String(byteArray);
 
         }
@@ -333,6 +309,9 @@ namespace Tools_WebApp.Controllers
             IWorkbook workbook;
 
             string nameFileReport = reportString + Guid.NewGuid().ToString().Substring(0, 4) + fileExtension;
+            string nameSheetReport = partialNameSheetReport + data.IdTool;
+            // Find download folder and create path with nameFileReport
+            string FileVirtualPath = Path.Combine(PATH, nameFileReport);
 
 
             // Loading Template.xlsx and save the workbook
@@ -344,25 +323,20 @@ namespace Tools_WebApp.Controllers
 
             // Loading sheet, change sheet's name and poputate its
             ISheet sheet = workbook.GetSheet(templateName);
-            workbook.SetSheetName(0, partialNameSheetReport + data.IdTool);
-
-            // Find download folder and create path with nameFileReport
-            string FileVirtualPath = Path.Combine(PATH, nameFileReport);
+            workbook.SetSheetName(0, nameSheetReport);
+            PopulateSheet(sheet, data);
+            AddImageToExcel(workbook, sheet, qrCode);
 
             using (FileStream sw = System.IO.File.Open(FileVirtualPath, FileMode.Create, FileAccess.Write))
-            {
-                string nameSheetReport = partialNameSheetReport + data.IdTool;
-
-                ISheet sheetReport = workbook.GetSheet(nameSheetReport);
-                if (sheetReport is null) workbook.CreateSheet(nameSheetReport);
-
-                PopulateSheet(sheetReport, data);
-                AddImageToExcel(workbook, sheetReport, qrCode);
+            {              
                 workbook.Write(sw);
                 sw.Close();
             }
             return File(FileVirtualPath, "application/force-download", nameFileReport); ;
         }
+
+        #endregion 
+
 
     }
 }

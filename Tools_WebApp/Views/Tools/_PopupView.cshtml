@@ -10,14 +10,17 @@
     pc.AllowDragging = true;
     pc.PopupHorizontalAlign = PopupHorizontalAlign.WindowCenter;
     pc.PopupVerticalAlign = PopupVerticalAlign.WindowCenter;
-    pc.CloseAction = CloseAction.OuterMouseClick;
+    pc.CloseAction = CloseAction.CloseButton;
     pc.CloseOnEscape = true;
+    pc.AllowResize = true;
+
+
     pc.ClientSideEvents.PopUp = "OnPopupShow";
 
     pc.SetContent(() =>
     {
         ViewContext.Writer.Write(
-                "<div id='report_int'> </div>"
-            );
+            "<div id='report_int'> </div>"
+        );
     });
 }).GetHtml()

@@ -34,7 +34,6 @@
         settings.SettingsBehavior.AllowClientEventsOnLoad = true;
 
 
-
         settings.ClientSideEvents.CustomButtonClick = "OnGetRowValue";
         settings.CommandColumn.CustomButtons.Add(new GridViewCommandColumnCustomButton()
         {
@@ -79,6 +78,7 @@
 
         settings.FormatConditions.Add(format1);
 
+
         settings.Columns.Add(column =>
         {
             column.VisibleIndex = settings.Columns.Count + 1;
@@ -116,8 +116,8 @@
                 {
                     b.Name = "Create_Report_Button" + c.KeyValue;
                     b.Text = "Download";
-            //b.RouteValues = new { Controller = "Tools", Action = "GridViewPartialReportDownload", id = c.KeyValue.ToString() };
-            string ReportDownloadLink = "https://localhost:44340/Tools/GridViewPartialReportDownload/" + c.KeyValue.ToString();
+                    //b.RouteValues = new { Controller = "Tools", Action = "GridViewPartialReportDownload", id = c.KeyValue.ToString() };
+                    string ReportDownloadLink = "https://localhost:44340/Tools/GridViewPartialReportDownload/" + c.KeyValue.ToString();
                     string ReportDownloadString = string.Format("function(s, e) {{  window.location= '{0}' }}", ReportDownloadLink);
                     b.ClientSideEvents.Click = ReportDownloadString;
                 }).GetHtml();
@@ -157,9 +157,11 @@
         grid.SetEditErrorText((string)ViewData["EditError"]);
     }
 
+   
 
 }
 
+    
 @grid.Bind(Model).GetHtml()
 
 

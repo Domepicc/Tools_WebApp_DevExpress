@@ -14,7 +14,7 @@
         });
     }
 
-function OnPopupShow(s, e) {
+    function OnPopupShow(s, e) {
         s.SetWidth($(window).width() * 0.4);
         s.SetHeight($(window).height() * 0.5);
         s.UpdatePosition();
